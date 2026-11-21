@@ -1,0 +1,21 @@
+# Gradle & build outputs
+.gradle/
+build/
+app/build/
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Local machine configuration (SDK path, signing keys)
+local.properties
+*.jks
+*.keystore
+
+# IDE & OS files
+.idea/
+*.iml
+.DS_Store
+.cxx/
+.externalNativeBuild/

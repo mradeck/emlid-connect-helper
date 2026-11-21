@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Emlid Helper</string>
+    <string name="accessibility_service_label">Emlid Helper – Auto-Cache leeren</string>
+    <string name="accessibility_service_description">Leert beim Starten des Emlid-Resets automatisch nur den Cache von Emlid Flow (niemals App-Daten) und kann optional Stopp erzwingen ausführen. Ist außerhalb des Resets komplett inaktiv.</string>
+</resources>
