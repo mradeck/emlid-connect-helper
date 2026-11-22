@@ -1,6 +1,7 @@
 # Schritt-für-Schritt-Anleitung: Emlid Connect Helper (Samsung Galaxy S24 Ultra)
 
-Diese Anleitung führt dich **Menü für Menü** durch Installation, Einrichtung und Nutzung von **Emlid Connect Helper** auf einem **Samsung Galaxy S24 Ultra** (One UI) für den **Emlid Reach RS4 Pro** mit **Emlid Flow**.
+Diese Anleitung führt dich **Menü für Menü** durch Installation, Einrichtung und Nutzung von **Emlid Connect Helper** auf einem **Samsung Galaxy S24 Ultra** (getestet mit **One UI 9.0 / Android 17**, *Intelligent Wi-Fi 9.0.0*) für den **Emlid Reach RS4 Pro** mit **Emlid Flow**.  
+*(Hinweis: Die App funktioniert grundsätzlich auch auf **anderen Android-12+-Smartphones** wie Google Pixel, Motorola, OnePlus oder Xiaomi – dort heißen lediglich einzelne Systemeinstellungs-Menüs leicht anders und der Punkt „Samsung Intelligent Wi-Fi“ entfällt.)*
 
 ---
 
@@ -16,6 +17,7 @@ Einige Einstellungen auf Samsung-Geräten sind **ausgegraut** oder funktionieren
 | Schalter in der **Eingabehilfe (Bedienungshilfe)** ist **ausgegraut** | Android 13+ Sicherheitsregel (**„Eingeschränkte Einstellungen“**) bei manuell installierten APKs. | *Einstellungen → Apps → Emlid Helper → 3-Punkte-Menü oben rechts → **Eingeschränkte Einstellungen zulassen***, danach zurück in die Eingabehilfe. |
 | **Shizuku** lässt sich nicht koppeln oder starten | **WLAN-Debugging** funktioniert nur, solange das Smartphone mit einem **WLAN** verbunden ist. | Kurz mit einem beliebigen WLAN verbinden, dann koppeln & starten. |
 | **Shizuku** zeigt nach einem Handy-Neustart „Dienst aus“ | Android beendet ADB-/Shizuku-Dienste nach jedem kompletten Neustart. | Shizuku-App kurz öffnen → **Starten** (oder ohne Shizuku den automatischen geführten Modus nutzen). |
+| **Gemini-App meldet „Kein Internet“**, während **Chrome normal funktioniert** (bei aktivem Reach-WLAN) | Unter Samsung One UI 9.0 / Android 17 bleibt bei *„Verbunden ohne Internet“* das 5G-Routing für Chrome aktiv, einzelne Apps (wie die native Gemini-App) prüfen aber das aktive WLAN ohne Internet und streiken. | Entweder im **Chrome-Browser** (`gemini.google.com`) suchen, WLAN kurz trennen – oder noch besser: den **RS4 Pro mit dem mobilen Hotspot des S24 Ultra verbinden** (statt umgekehrt), dann haben alle Apps durchgehend 5G-Internet. |
 
 > **Wichtiger Sicherheitshinweis für Emlid Flow:**  
 > Beim Zurücksetzen **immer nur „Cache leeren“** verwenden – **niemals „Daten löschen“**, da sonst lokale Projekte und Logins in Emlid Flow entfernt werden!  
