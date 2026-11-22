@@ -144,6 +144,60 @@ class HelperViewModel(application: Application) : AndroidViewModel(application) 
         settingsMonitor.openUrlInBrowser(url)
     }
 
+    fun forgetSavedReachWifiNetworks() {
+        viewModelScope.launch {
+            val isEn = _uiState.value.language == AppLanguage.EN
+            if (shizukuController.state.value != ShizukuState.READY) {
+                settingsMonitor.openWifiSettings()
+                return@launch
+            }
+            val targets = shizukuController.listSavedWifiNetworks().filter { it.isEmlidRelated }
+            if (targets.isEmpty()) {
+                val msg = if (isEn) {
+                    "No saved Reach/Emlid Wi-Fi profile found."
+                } else {
+                    "Kein gespeichertes Reach-/Emlid-WLAN-Profil gefunden."
+                }
+                appendLog(msg, false)
+                _uiState.update { it.copy(wifiForgetFeedback = msg) }
+                return@launch
+            }
+
+            val removed = mutableListOf<String>()
+            val failed = mutableListOf<String>()
+            for (net in targets) {
+                val res = shizukuController.forgetWifiNetwork(net.networkId, net.ssid)
+                if (res.isSuccess) {
+                    removed.add(net.ssid)
+                } else {
+                    failed.add("${net.ssid} (${res.output})")
+                }
+            }
+
+            val feedback = if (failed.isEmpty()) {
+                if (isEn) {
+                    "Forgotten: ${removed.joinToString(", ")}. Reconnect now and tap \"Always connect\"."
+                } else {
+                    "Entfernt: ${removed.joinToString(", ")}. Jetzt neu verbinden & „Immer verbinden“ wählen."
+                }
+            } else {
+                if (isEn) {
+                    "Removed: ${removed.joinToString(", ").ifBlank { "none" }} · Failed: ${failed.joinToString(", ")}"
+                } else {
+                    "Entfernt: ${removed.joinToString(", ").ifBlank { "keine" }} · Fehler: ${failed.joinToString(", ")}"
+                }
+            }
+            appendLog(feedback, failed.isNotEmpty())
+            _uiState.update { it.copy(wifiForgetFeedback = feedback) }
+            delay(450)
+            refreshAllInternal()
+        }
+    }
+
+    fun dismissWifiForgetFeedback() {
+        _uiState.update { it.copy(wifiForgetFeedback = null) }
+    }
+
     fun refreshAll() {
         viewModelScope.launch {
             shizukuController.refreshState()
@@ -155,6 +209,11 @@ class HelperViewModel(application: Application) : AndroidViewModel(application) 
         val lang = _uiState.value.language
         val bt = bluetoothMonitor.inspect(shizukuController)
         val wifi = networkMonitor.inspect(lang)
+        val savedEmlidWifi = if (shizukuController.state.value == ShizukuState.READY) {
+            shizukuController.listSavedWifiNetworks().filter { it.isEmlidRelated }
+        } else {
+            emptyList()
+        }
         val locEnabled = networkMonitor.isLocationServiceEnabled()
         val checks = settingsMonitor.buildChecklist(bt, wifi, locEnabled, shizukuController, lang)
         val capabilities = AutomationCapabilities(
@@ -172,6 +231,7 @@ class HelperViewModel(application: Application) : AndroidViewModel(application) 
             current.copy(
                 bluetooth = bt,
                 wifi = wifi,
+                savedEmlidWifiNetworks = savedEmlidWifi,
                 samsungChecks = checks,
                 automation = capabilities,
                 lastRefreshTime = nowStr

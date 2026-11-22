@@ -253,6 +253,8 @@ private fun EmlidHelperAppRoot(viewModel: HelperViewModel = viewModel()) {
                         onUpdateResetConfig = viewModel::updateResetConfig,
                         onQuickResetBluetooth = viewModel::quickResetBluetoothOnly,
                         onBrowseReceiverIp = viewModel::browseReceiverIp,
+                        onForgetReachWifi = viewModel::forgetSavedReachWifiNetworks,
+                        onDismissWifiForgetFeedback = viewModel::dismissWifiForgetFeedback,
                         onOpenBluetoothSettings = {
                             viewModel.handleSettingAction(SettingActionType.OPEN_BLUETOOTH_SETTINGS)
                         },

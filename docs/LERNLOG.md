@@ -1,5 +1,12 @@
 # Lernlog – Emlid Connect Helper
 
+### v2.1: Reach-WLAN vergessen („Immer verbinden“ zurücksetzen) (`v26.11.2.1`)
+
+- **Problem:** Wurde beim ersten Verbinden mit `reach:XX:XX` die Abfrage *„Verbunden ohne Internet“ → „Immer verbinden“* verpasst oder weggeklickt, merkt sich Android diese Auswahl dauerhaft für das gespeicherte WLAN-Profil und fragt nicht mehr nach.
+- **Lösung:** Gezielter Button **„Reach-WLAN vergessen („Immer verbinden“ zurücksetzen)“** in der WLAN-Karte: Mit Shizuku liest die App gespeicherte Netze via `cmd wifi list-networks`, filtert nur `reach:*`/`emlid`-Profile heraus und entfernt sie nach Rückfrage per `cmd wifi forget-network <id>` (ohne Shizuku öffnet sich eine 3-Schritte-Kurzhilfe + WLAN-Einstellungen).
+- **Sonderfälle / Edge-Cases:** Auf Samsung One UI 9.0 / Android 17 listet `cmd wifi list-networks` dieselbe `Network Id` teils doppelt (z. B. `open` + `owe^` oder `wpa2-psk` + `sae^`) – der Parser dedupliziert deshalb zwingend nach `networkId` (`ShizukuWifiParserTest`).
+- **Merksatz:** Kein kompletter Netzwerk-Reset nötig – das einzelne Entfernen des `reach:XX:XX`-Profils erzwingt sofort wieder den *„Immer verbinden“*-Dialog.
+
 ### v2: Hotspot-IP-Browser, DE/EN, Hell/Dunkel, Portfolio-Footer & One-UI-9.0-WLAN-Beobachtung (`v26.11.2.0`)
 
 - **Problem:** Im Feld fehlten ein direkter 1-Tap-Sprung zur Web-Oberfläche des RS4 Pro über dessen Hotspot-IP, eine DE/EN- & Hell/Dunkel-Umschaltung sowie die einheitliche App-Fußzeile (wie bei `gps2utm.netlify.app`). Außerdem trat bei aktiver Verbindung zum Reach-WLAN (`reach:XX:XX`, *„Verbunden ohne Internet“*) unter **Samsung One UI 9.0 / Android 17** das Verhalten auf, dass **Chrome** normal über 5G ins Internet kam, die **native Gemini-App** aber „Kein Internet“ meldete.

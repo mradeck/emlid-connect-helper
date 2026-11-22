@@ -83,6 +83,14 @@ data class AppStrings(
     val vpnInactiveOk: String,
     val disconnectVpnButton: String,
     val openWifiSettingsButton: String,
+    val forgetReachWifiButton: String,
+    val savedReachProfilesLabel: (String) -> String,
+    val forgetReachDialogTitle: String,
+    val forgetReachDialogBodyAuto: (String) -> String,
+    val forgetReachDialogBodyNoProfiles: String,
+    val forgetReachDialogBodyManual: String,
+    val forgetReachConfirmButton: String,
+    val openWifiReconnectButton: String,
 
     // Device / Samsung checklist screen
     val checklistHeading: String,
@@ -243,6 +251,16 @@ private val GermanStrings = AppStrings(
     vpnInactiveOk = "Kein VPN aktiv",
     disconnectVpnButton = "Trennen",
     openWifiSettingsButton = "WLAN-Einstellungen öffnen",
+    forgetReachWifiButton = "Reach-WLAN vergessen („Immer verbinden“ zurücksetzen)",
+    savedReachProfilesLabel = { list -> "Gespeicherte Reach-WLANs: $list" },
+    forgetReachDialogTitle = "Reach-WLAN zurücksetzen",
+    forgetReachDialogBodyAuto = { list ->
+        "Folgende gespeicherte Reach-WLAN-Profile werden per Shizuku entfernt:\n\n• $list\n\nAlle anderen WLANs bleiben unangetastet. Verbinde dich danach neu (Werks-Passwort bei Emlid meist „emlidreach“) und wähle bei „Verbunden ohne Internet“ dauerhaft „Immer verbinden“."
+    },
+    forgetReachDialogBodyNoProfiles = "Es wurde kein gespeichertes Reach-/Emlid-WLAN-Profil gefunden. Falls dein Empfänger-WLAN anders heißt, öffne die WLAN-Einstellungen → Zahnrad neben dem WLAN (oder 3-Punkte-Menü → Erweiterte Einstellungen → Netzwerke verwalten) → „Entfernen“.",
+    forgetReachDialogBodyManual = "Shizuku ist gerade nicht aktiv – so setzt du die „Immer verbinden“-Abfrage in 10 Sekunden manuell zurück:\n\n1. WLAN-Einstellungen öffnen\n2. Zahnrad neben reach:XX:XX → „Entfernen“ (falls RS4 Pro aus ist: 3-Punkte-Menü → Erweiterte Einstellungen → Netzwerke verwalten)\n3. Neu verbinden (Werks-Passwort meist „emlidreach“) und bei „Verbunden ohne Internet“ → „Immer verbinden“ wählen.",
+    forgetReachConfirmButton = "Jetzt entfernen",
+    openWifiReconnectButton = "WLAN-Einstellungen öffnen",
 
     checklistHeading = "Samsung & Android Checkliste",
     checklistSubtitle = "Einstellungen für stabile Emlid-Verbindungen (getestet auf S24 Ultra · One UI 9.0 / Android 17)",
@@ -398,6 +416,16 @@ private val EnglishStrings = AppStrings(
     vpnInactiveOk = "No active VPN",
     disconnectVpnButton = "Disconnect",
     openWifiSettingsButton = "Open Wi-Fi Settings",
+    forgetReachWifiButton = "Forget Reach Wi-Fi (Reset \"Always connect\")",
+    savedReachProfilesLabel = { list -> "Saved Reach Wi-Fi profiles: $list" },
+    forgetReachDialogTitle = "Reset Reach Wi-Fi Profile",
+    forgetReachDialogBodyAuto = { list ->
+        "The following saved Reach Wi-Fi profile(s) will be forgotten via Shizuku:\n\n• $list\n\nAll other Wi-Fi networks remain untouched. Reconnect afterwards (default Emlid password is usually \"emlidreach\") and tap \"Always connect\" on the \"Connected without internet\" prompt."
+    },
+    forgetReachDialogBodyNoProfiles = "No saved Reach/Emlid Wi-Fi profile was found. If your receiver hotspot uses a custom name, open Wi-Fi settings → gear icon next to the network (or 3-dot menu → Advanced settings → Manage networks) → \"Forget\".",
+    forgetReachDialogBodyManual = "Shizuku is not active right now — reset the \"Always connect\" prompt manually in 10 seconds:\n\n1. Open Wi-Fi settings\n2. Tap the gear icon next to reach:XX:XX → \"Forget\" (if RS4 Pro is off: 3-dot menu → Advanced settings → Manage networks)\n3. Reconnect (default password is usually \"emlidreach\") and tap \"Always connect\" on \"Connected without internet\".",
+    forgetReachConfirmButton = "Forget now",
+    openWifiReconnectButton = "Open Wi-Fi Settings",
 
     checklistHeading = "Samsung & Android Checklist",
     checklistSubtitle = "Recommended settings for reliable Emlid links (tested on S24 Ultra · One UI 9.0 / Android 17)",

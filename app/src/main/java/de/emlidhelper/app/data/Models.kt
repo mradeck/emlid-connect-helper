@@ -32,6 +32,12 @@ data class BluetoothStatus(
         get() = hasPermission && isEnabled && !isAirplaneModeOn && connectedDevices.isEmpty()
 }
 
+data class SavedWifiNetwork(
+    val networkId: Int,
+    val ssid: String,
+    val isEmlidRelated: Boolean
+)
+
 data class WifiNetworkStatus(
     val isWifiEnabled: Boolean = false,
     val isConnected: Boolean = false,
@@ -159,6 +165,8 @@ data class HelperUiState(
     val themeMode: AppThemeMode = AppThemeMode.SYSTEM,
     val bluetooth: BluetoothStatus = BluetoothStatus(),
     val wifi: WifiNetworkStatus = WifiNetworkStatus(),
+    val savedEmlidWifiNetworks: List<SavedWifiNetwork> = emptyList(),
+    val wifiForgetFeedback: String? = null,
     val samsungChecks: List<SamsungCheckItem> = emptyList(),
     val automation: AutomationCapabilities = AutomationCapabilities(),
     val resetConfig: ResetConfig = ResetConfig(),
