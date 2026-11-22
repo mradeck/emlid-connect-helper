@@ -1,9 +1,20 @@
 package de.emlidhelper.app.data
 
+enum class AppLanguage {
+    DE,
+    EN
+}
+
+enum class AppThemeMode {
+    SYSTEM,
+    LIGHT,
+    DARK
+}
+
 data class BluetoothDeviceInfo(
     val name: String,
     val address: String,
-    val connectionType: String, // e.g. "BLE / GATT", "Audio / HFP", "A2DP", "System (Shizuku)"
+    val connectionType: String,
     val isEmlidRelated: Boolean,
     val isConnected: Boolean
 )
@@ -31,8 +42,19 @@ data class WifiNetworkStatus(
     val hasValidatedInternet: Boolean = false,
     val isEmlidHotspot: Boolean = false,
     val isVpnActive: Boolean = false,
-    val activeTransportLabel: String = "Unbekannt"
-)
+    val activeTransportLabel: String = "–"
+) {
+    val browseIpAddress: String?
+        get() = when {
+            !isConnected -> null
+            !gatewayAddress.isNullOrBlank() -> gatewayAddress
+            isEmlidHotspot -> "192.168.42.1"
+            else -> null
+        }
+
+    val receiverBrowseUrl: String?
+        get() = browseIpAddress?.let { "http://$it" }
+}
 
 enum class CheckSeverity {
     OK,
@@ -133,6 +155,8 @@ data class DiagnosticLogEntry(
 )
 
 data class HelperUiState(
+    val language: AppLanguage = AppLanguage.DE,
+    val themeMode: AppThemeMode = AppThemeMode.SYSTEM,
     val bluetooth: BluetoothStatus = BluetoothStatus(),
     val wifi: WifiNetworkStatus = WifiNetworkStatus(),
     val samsungChecks: List<SamsungCheckItem> = emptyList(),

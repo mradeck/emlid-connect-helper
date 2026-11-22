@@ -37,6 +37,8 @@ import de.emlidhelper.app.data.CheckSeverity
 import de.emlidhelper.app.data.HelperUiState
 import de.emlidhelper.app.data.SamsungCheckItem
 import de.emlidhelper.app.data.SettingActionType
+import de.emlidhelper.app.i18n.AppStrings
+import de.emlidhelper.app.ui.components.AppFooter
 import de.emlidhelper.app.ui.theme.StatusError
 import de.emlidhelper.app.ui.theme.StatusInfo
 import de.emlidhelper.app.ui.theme.StatusOk
@@ -45,6 +47,7 @@ import de.emlidhelper.app.ui.theme.StatusWarn
 @Composable
 fun SamsungSettingsScreen(
     state: HelperUiState,
+    strings: AppStrings,
     onRefresh: () -> Unit,
     onAction: (SettingActionType) -> Unit
 ) {
@@ -60,18 +63,18 @@ fun SamsungSettingsScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        "Samsung S24 Ultra Checkliste",
+                        strings.checklistHeading,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        "One-UI-Einstellungen für stabile Emlid-Verbindungen",
+                        strings.checklistSubtitle,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 IconButton(onClick = onRefresh) {
-                    Icon(Icons.Default.Refresh, contentDescription = "Neu prüfen")
+                    Icon(Icons.Default.Refresh, contentDescription = strings.refresh)
                 }
             }
         }
@@ -81,10 +84,12 @@ fun SamsungSettingsScreen(
         }
 
         item {
-            EmlidFieldTipsCard()
+            EmlidFieldTipsCard(strings = strings)
         }
 
-        item { Spacer(Modifier.height(12.dp)) }
+        item {
+            AppFooter(strings = strings, language = state.language)
+        }
     }
 }
 
@@ -146,7 +151,7 @@ private fun SamsungCheckCard(
 }
 
 @Composable
-private fun EmlidFieldTipsCard() {
+private fun EmlidFieldTipsCard(strings: AppStrings) {
     ElevatedCard(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.fillMaxWidth()
@@ -156,31 +161,16 @@ private fun EmlidFieldTipsCard() {
                 Icon(Icons.Default.TipsAndUpdates, contentDescription = null, tint = StatusInfo)
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    "RS4 Pro Praxis-Hinweise",
+                    strings.tipsHeading,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
             }
-            Text(
-                "• WLAN-Alternative: In Emlid Flow unter Profil → App-Einstellungen → Präferenzen lässt sich „Erweiterte Verbindung“ aktivieren (Direktzugriff per IP statt Bluetooth).",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                "• Firmware prüfen: In der Firmware-Reihe 34.x gab es bekannte Bluetooth-Stabilitätsprobleme – bei bestehender Verbindung Firmware & Emlid Flow aktuell halten.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                "• Neustart-Warnung: Den Netzschalter am RS4 Pro beim Neustart niemals länger als 5 Sekunden gedrückt halten – sonst wechselt der Empfänger in den Werksmodus (Factory Mode).",
-                style = MaterialTheme.typography.bodySmall,
-                color = StatusWarn
-            )
-            Text(
-                "• Zweitgeräte: Sicherstellen, dass kein Tablet oder Zweit-Smartphone im Hintergrund noch mit dem RS4 Pro verbunden ist.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Text(strings.tipWifiAlt, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(strings.tipFirmware, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(strings.tipRebootWarning, style = MaterialTheme.typography.bodySmall, color = StatusWarn)
+            Text(strings.tipSecondaryDevice, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(strings.tipGeminiWifiNote, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

@@ -1,7 +1,6 @@
 package de.emlidhelper.app.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.AirplanemodeActive
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.BluetoothConnected
@@ -27,7 +27,7 @@ import androidx.compose.material.icons.filled.BluetoothDisabled
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Router
@@ -72,6 +72,8 @@ import de.emlidhelper.app.data.ResetPhase
 import de.emlidhelper.app.data.ResetProgress
 import de.emlidhelper.app.data.ShizukuState
 import de.emlidhelper.app.data.WifiNetworkStatus
+import de.emlidhelper.app.i18n.AppStrings
+import de.emlidhelper.app.ui.components.AppFooter
 import de.emlidhelper.app.ui.theme.StatusError
 import de.emlidhelper.app.ui.theme.StatusErrorContainerDark
 import de.emlidhelper.app.ui.theme.StatusErrorContainerLight
@@ -86,6 +88,8 @@ import de.emlidhelper.app.ui.theme.StatusWarnContainerLight
 @Composable
 fun DashboardScreen(
     state: HelperUiState,
+    strings: AppStrings,
+    isDark: Boolean,
     onRefresh: () -> Unit,
     onStartReset: () -> Unit,
     onCancelReset: () -> Unit,
@@ -93,6 +97,7 @@ fun DashboardScreen(
     onDismissResetResult: () -> Unit,
     onUpdateResetConfig: ((ResetConfig) -> ResetConfig) -> Unit,
     onQuickResetBluetooth: () -> Unit,
+    onBrowseReceiverIp: () -> Unit,
     onOpenBluetoothSettings: () -> Unit,
     onOpenWifiSettings: () -> Unit,
     onOpenVpnSettings: () -> Unit,
@@ -102,7 +107,6 @@ fun DashboardScreen(
     onGoToAutomationTab: () -> Unit,
     onGoToSamsungTab: () -> Unit
 ) {
-    val isDark = isSystemInDarkTheme()
     val errorCount = state.samsungChecks.count { it.severity == CheckSeverity.ERROR }
     val warnCount = state.samsungChecks.count { it.severity == CheckSeverity.WARNING }
 
@@ -111,18 +115,17 @@ fun DashboardScreen(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // 1. Permission banner if BT or Location missing
         if (!state.automation.hasBluetoothPermission || !state.automation.hasLocationPermission) {
             item {
-                PermissionWarningCard(onRequestPermissions = onRequestPermissions)
+                PermissionWarningCard(strings = strings, onRequestPermissions = onRequestPermissions)
             }
         }
 
-        // 2. Overall Readiness Banner
         item {
             ReadinessBannerCard(
                 bluetooth = state.bluetooth,
                 wifi = state.wifi,
+                strings = strings,
                 errorCount = errorCount,
                 warnCount = warnCount,
                 lastRefresh = state.lastRefreshTime,
@@ -132,10 +135,10 @@ fun DashboardScreen(
             )
         }
 
-        // 3. Main 1-Tap Reset Action Card (or active Reset Progress)
         item {
             ResetControlCard(
                 state = state,
+                strings = strings,
                 isDark = isDark,
                 onStartReset = onStartReset,
                 onCancelReset = onCancelReset,
@@ -148,10 +151,10 @@ fun DashboardScreen(
             )
         }
 
-        // 4. Bluetooth Monitor Card
         item {
             BluetoothMonitorCard(
                 bluetooth = state.bluetooth,
+                strings = strings,
                 shizukuReady = state.automation.shizukuState == ShizukuState.READY,
                 isDark = isDark,
                 onQuickResetBluetooth = onQuickResetBluetooth,
@@ -159,23 +162,29 @@ fun DashboardScreen(
             )
         }
 
-        // 5. Wi-Fi & Network Monitor Card
         item {
             WifiMonitorCard(
                 wifi = state.wifi,
+                strings = strings,
                 isDark = isDark,
+                onBrowseReceiverIp = onBrowseReceiverIp,
                 onOpenWifiSettings = onOpenWifiSettings,
                 onOpenVpnSettings = onOpenVpnSettings,
                 onRequestPermissions = onRequestPermissions
             )
         }
 
-        item { Spacer(Modifier.height(12.dp)) }
+        item {
+            AppFooter(strings = strings, language = state.language)
+        }
     }
 }
 
 @Composable
-private fun PermissionWarningCard(onRequestPermissions: () -> Unit) {
+private fun PermissionWarningCard(
+    strings: AppStrings,
+    onRequestPermissions: () -> Unit
+) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
         shape = RoundedCornerShape(16.dp)
@@ -194,20 +203,20 @@ private fun PermissionWarningCard(onRequestPermissions: () -> Unit) {
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    "Berechtigungen fehlen",
+                    strings.permissionsMissingTitle,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
                 Text(
-                    "Für Bluetooth-Geräte & WLAN-Namen (SSID) benötigt die App Bluetooth- und Standortfreigabe.",
+                    strings.permissionsMissingBody,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
             Spacer(Modifier.width(8.dp))
             Button(onClick = onRequestPermissions) {
-                Text("Freigeben")
+                Text(strings.grantButton)
             }
         }
     }
@@ -217,6 +226,7 @@ private fun PermissionWarningCard(onRequestPermissions: () -> Unit) {
 private fun ReadinessBannerCard(
     bluetooth: BluetoothStatus,
     wifi: WifiNetworkStatus,
+    strings: AppStrings,
     errorCount: Int,
     warnCount: Int,
     lastRefresh: String,
@@ -260,23 +270,23 @@ private fun ReadinessBannerCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = when {
-                            allGood -> "Bereit für Emlid RS4 Pro"
-                            bluetooth.isAirplaneModeOn -> "Flugmodus ist aktiv"
-                            errorCount > 0 -> "$errorCount Samsung-Problem(e) erkannt"
-                            bluetooth.connectedDevices.isNotEmpty() -> "${bluetooth.connectedDevices.size} BT-Gerät(e) noch verbunden"
-                            else -> "Hinweis prüfen ($warnCount)"
+                            allGood -> strings.readyForRs4
+                            bluetooth.isAirplaneModeOn -> strings.airplaneModeActive
+                            errorCount > 0 -> strings.issuesDetected(errorCount)
+                            bluetooth.connectedDevices.isNotEmpty() -> strings.btStillConnected(bluetooth.connectedDevices.size)
+                            else -> strings.warningsToCheck(warnCount)
                         },
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Stand: $lastRefresh · ${if (wifi.isEmlidHotspot) "Reach-Hotspot aktiv" else wifi.ssid ?: wifi.activeTransportLabel}",
+                        text = "${strings.updatedAtPrefix} $lastRefresh · ${if (wifi.isEmlidHotspot) strings.reachHotspotActive else wifi.ssid ?: wifi.activeTransportLabel}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 IconButton(onClick = onRefresh) {
-                    Icon(Icons.Default.Refresh, contentDescription = "Aktualisieren")
+                    Icon(Icons.Default.Refresh, contentDescription = strings.refresh)
                 }
             }
 
@@ -286,7 +296,7 @@ private fun ReadinessBannerCard(
                     onClick = onGoToSamsungTab,
                     contentPadding = PaddingValues(0.dp)
                 ) {
-                    Text("Zur Samsung-Checkliste ($errorCount offen) →", color = accent, fontWeight = FontWeight.SemiBold)
+                    Text(strings.goToChecklist(errorCount), color = accent, fontWeight = FontWeight.SemiBold)
                 }
             }
         }
@@ -297,6 +307,7 @@ private fun ReadinessBannerCard(
 @Composable
 private fun ResetControlCard(
     state: HelperUiState,
+    strings: AppStrings,
     isDark: Boolean,
     onStartReset: () -> Unit,
     onCancelReset: () -> Unit,
@@ -330,32 +341,32 @@ private fun ResetControlCard(
                 Spacer(Modifier.width(8.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        "1-Tap Emlid Reset",
+                        strings.resetCardTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = when {
-                            shizukuReady && accessReady -> "Vollautomatik aktiv (Shizuku + Auto-Cache)"
-                            shizukuReady -> "Shizuku aktiv (Cache manuell / Auto-Cache optional)"
-                            accessReady -> "Auto-Cache aktiv (Flugmodus mit geführtem Timer)"
-                            else -> "Geführter Modus (Fallback – Variante A)"
+                            shizukuReady && accessReady -> strings.modeFullAuto
+                            shizukuReady -> strings.modeShizukuOnly
+                            accessReady -> strings.modeAutoCacheOnly
+                            else -> strings.modeGuidedFallback
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = if (shizukuReady && accessReady) StatusOk else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 IconButton(onClick = { showOptions = !showOptions }) {
-                    Icon(Icons.Default.Settings, contentDescription = "Optionen")
+                    Icon(Icons.Default.Settings, contentDescription = strings.options)
                 }
             }
 
             Spacer(Modifier.height(12.dp))
 
-            // Active reset progress OR Completed banner OR Main Button
             if (progress.isRunning) {
                 ActiveResetProgressBlock(
                     progress = progress,
+                    strings = strings,
                     onCancelReset = onCancelReset,
                     onConfirmManualStep = onConfirmManualStep,
                     onOpenAirplaneSettings = onOpenAirplaneSettings
@@ -389,28 +400,25 @@ private fun ResetControlCard(
                                 Text(progress.detail, style = MaterialTheme.typography.bodySmall)
                             }
                             IconButton(onClick = onDismissResetResult) {
-                                Icon(Icons.Default.Close, contentDescription = "Schließen", modifier = Modifier.size(18.dp))
+                                Icon(Icons.Default.Close, contentDescription = strings.close, modifier = Modifier.size(18.dp))
                             }
                         }
                     }
                     Spacer(Modifier.height(12.dp))
                 }
 
-                // Wait duration chips
                 Text(
-                    "Flugmodus-Wartezeit:",
+                    strings.airplaneWaitLabel,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(Modifier.height(6.dp))
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(10, 15, 20, 30).forEach { sec ->
                         FilterChip(
                             selected = config.airplaneWaitSeconds == sec,
                             onClick = { onUpdateResetConfig { it.copy(airplaneWaitSeconds = sec) } },
-                            label = { Text("${sec} Sek.") }
+                            label = { Text("$sec ${strings.secShort}") }
                         )
                     }
                 }
@@ -420,22 +428,22 @@ private fun ResetControlCard(
                     HorizontalDivider()
                     Spacer(Modifier.height(8.dp))
                     ResetOptionSwitch(
-                        label = "Emlid Flow zwangsbeenden",
+                        label = strings.optForceStop,
                         checked = config.forceStopEmlid,
                         onCheckedChange = { v -> onUpdateResetConfig { it.copy(forceStopEmlid = v) } }
                     )
                     ResetOptionSwitch(
-                        label = "Nur Cache leeren (Daten bleiben erhalten)",
+                        label = strings.optClearCacheOnly,
                         checked = config.clearCache,
                         onCheckedChange = { v -> onUpdateResetConfig { it.copy(clearCache = v) } }
                     )
                     ResetOptionSwitch(
-                        label = "Flugmodus aus/ein (BT & WLAN Reset)",
+                        label = strings.optToggleAirplane,
                         checked = config.toggleAirplaneMode,
                         onCheckedChange = { v -> onUpdateResetConfig { it.copy(toggleAirplaneMode = v) } }
                     )
                     ResetOptionSwitch(
-                        label = "Danach Emlid Flow starten",
+                        label = strings.optLaunchEmlidAfter,
                         checked = config.launchEmlidAfter,
                         onCheckedChange = { v -> onUpdateResetConfig { it.copy(launchEmlidAfter = v) } }
                     )
@@ -453,7 +461,7 @@ private fun ResetControlCard(
                     Icon(Icons.Default.AirplanemodeActive, contentDescription = null)
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        "Emlid Reset & Verbinden starten",
+                        strings.startResetButton,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -470,7 +478,7 @@ private fun ResetControlCard(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(Icons.Default.OpenInNew, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(Modifier.width(6.dp))
                         Text("Emlid Flow")
                     }
@@ -480,7 +488,7 @@ private fun ResetControlCard(
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Vollautomatik einrichten")
+                            Text(strings.setupFullAutoButton)
                         }
                     }
                 }
@@ -492,6 +500,7 @@ private fun ResetControlCard(
 @Composable
 private fun ActiveResetProgressBlock(
     progress: ResetProgress,
+    strings: AppStrings,
     onCancelReset: () -> Unit,
     onConfirmManualStep: () -> Unit,
     onOpenAirplaneSettings: () -> Unit
@@ -525,7 +534,7 @@ private fun ActiveResetProgressBlock(
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    "Schritt ${progress.currentStep} von ${progress.totalSteps}",
+                    strings.stepOf(progress.currentStep, progress.totalSteps),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -559,21 +568,21 @@ private fun ActiveResetProgressBlock(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (progress.phase == ResetPhase.WAITING_MANUAL_CACHE) {
                 Button(onClick = onConfirmManualStep, modifier = Modifier.weight(1f)) {
-                    Text("Cache geleert – Weiter")
+                    Text(strings.cacheClearedContinue)
                 }
             }
             if (progress.phase == ResetPhase.WAITING_MANUAL_AIRPLANE_ON ||
                 progress.phase == ResetPhase.WAITING_MANUAL_AIRPLANE_OFF
             ) {
                 OutlinedButton(onClick = onOpenAirplaneSettings, modifier = Modifier.weight(1f)) {
-                    Text("Flugmodus-Menü")
+                    Text(strings.airplaneSettingsButton)
                 }
             }
             OutlinedButton(
                 onClick = onCancelReset,
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = StatusError)
             ) {
-                Text("Abbrechen")
+                Text(strings.cancelButton)
             }
         }
     }
@@ -599,6 +608,7 @@ private fun ResetOptionSwitch(
 @Composable
 private fun BluetoothMonitorCard(
     bluetooth: BluetoothStatus,
+    strings: AppStrings,
     shizukuReady: Boolean,
     isDark: Boolean,
     onQuickResetBluetooth: () -> Unit,
@@ -626,17 +636,17 @@ private fun BluetoothMonitorCard(
                 Spacer(Modifier.width(10.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        "Bluetooth-Verbindungen",
+                        strings.btTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = when {
-                            bluetooth.isAirplaneModeOn -> "Flugmodus aktiv"
-                            !bluetooth.isEnabled -> "Bluetooth ist ausgeschaltet"
-                            !bluetooth.hasPermission -> "Bluetooth-Berechtigung erforderlich"
-                            bluetooth.connectedDevices.isEmpty() -> "Keine Geräte verbunden – Kanal ist frei"
-                            else -> "${bluetooth.connectedDevices.size} Gerät(e) aktiv verbunden"
+                            bluetooth.isAirplaneModeOn -> strings.airplaneModeActive
+                            !bluetooth.isEnabled -> strings.btDisabled
+                            !bluetooth.hasPermission -> strings.btPermissionRequired
+                            bluetooth.connectedDevices.isEmpty() -> strings.btNoneConnectedSubtitle
+                            else -> strings.btActiveCount(bluetooth.connectedDevices.size)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = when {
@@ -653,7 +663,6 @@ private fun BluetoothMonitorCard(
 
             Spacer(Modifier.height(12.dp))
 
-            // Warning if Emlid is mistakenly paired in Android BT settings
             if (bluetooth.pairedEmlidDevices.isNotEmpty()) {
                 Card(
                     colors = CardDefaults.cardColors(
@@ -670,13 +679,13 @@ private fun BluetoothMonitorCard(
                         Spacer(Modifier.width(10.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                "Emlid in Android-BT gekoppelt!",
+                                strings.btPairedEmlidWarningTitle,
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = StatusError
                             )
                             Text(
-                                "${bluetooth.pairedEmlidDevices.joinToString { it.name }} sollte in den Android-Einstellungen entkoppelt und nur in Emlid Flow verbunden werden.",
+                                strings.btPairedEmlidWarningBody(bluetooth.pairedEmlidDevices.joinToString { it.name }),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
@@ -685,7 +694,6 @@ private fun BluetoothMonitorCard(
                 Spacer(Modifier.height(10.dp))
             }
 
-            // Connected devices list OR clean green badge
             if (bluetooth.isEnabled && bluetooth.hasPermission) {
                 if (bluetooth.connectedDevices.isEmpty()) {
                     Row(
@@ -699,7 +707,7 @@ private fun BluetoothMonitorCard(
                         Icon(Icons.Default.CheckCircle, contentDescription = null, tint = StatusOk, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(10.dp))
                         Text(
-                            "Alle Bluetooth-Geräte getrennt – nichts mehr verbunden.",
+                            strings.btAllDisconnectedBanner,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium
                         )
@@ -750,14 +758,14 @@ private fun BluetoothMonitorCard(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(if (shizukuReady) "BT trennen & resetten" else "BT-Einstellungen")
+                    Text(if (shizukuReady) strings.btDisconnectResetButton else strings.btSettingsButton)
                 }
                 if (shizukuReady) {
                     OutlinedButton(
                         onClick = onOpenBluetoothSettings,
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("System-BT")
+                        Text(strings.btSystemShortButton)
                     }
                 }
             }
@@ -768,11 +776,15 @@ private fun BluetoothMonitorCard(
 @Composable
 private fun WifiMonitorCard(
     wifi: WifiNetworkStatus,
+    strings: AppStrings,
     isDark: Boolean,
+    onBrowseReceiverIp: () -> Unit,
     onOpenWifiSettings: () -> Unit,
     onOpenVpnSettings: () -> Unit,
     onRequestPermissions: () -> Unit
 ) {
+    val browseIp = wifi.browseIpAddress
+
     ElevatedCard(
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.fillMaxWidth()
@@ -791,16 +803,16 @@ private fun WifiMonitorCard(
                 Spacer(Modifier.width(10.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        "WLAN & Netzwerk",
+                        strings.wifiTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = when {
-                            !wifi.isWifiEnabled -> "WLAN ist ausgeschaltet"
-                            !wifi.isConnected -> "Mit keinem WLAN verbunden (${wifi.activeTransportLabel})"
-                            wifi.ssid != null -> "Verbunden mit: ${wifi.ssid}"
-                            else -> "Mit WLAN verbunden"
+                            !wifi.isWifiEnabled -> strings.wifiDisabled
+                            !wifi.isConnected -> strings.wifiNotConnected(wifi.activeTransportLabel)
+                            wifi.ssid != null -> strings.wifiConnectedTo(wifi.ssid)
+                            else -> strings.wifiConnectedGeneric
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = if (wifi.isEmlidHotspot) StatusOk else MaterialTheme.colorScheme.onSurfaceVariant
@@ -831,19 +843,47 @@ private fun WifiMonitorCard(
                         .padding(12.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    InfoRow("WLAN-Name (SSID)", wifi.ssid ?: "Unbekannt")
-                    InfoRow("Geräte-IP", wifi.ipAddress ?: "–")
-                    InfoRow("Gateway / Empfänger-IP", wifi.gatewayAddress ?: "–")
+                    InfoRow(strings.wifiSsidLabel, wifi.ssid ?: strings.wifiUnknown)
+                    InfoRow(strings.wifiDeviceIpLabel, wifi.ipAddress ?: "–")
+                    InfoRow(strings.wifiGatewayIpLabel, browseIp ?: "–")
                     InfoRow(
-                        "Internet-Status",
-                        if (wifi.hasValidatedInternet) "Mit Internet" else "Ohne Internet (typisch für Reach-Hotspot)"
+                        strings.wifiInternetStatusLabel,
+                        if (wifi.hasValidatedInternet) strings.wifiWithInternet else strings.wifiWithoutInternet
                     )
+                }
+
+                // Direct 1-Tap Browse RS4 Pro / Gateway IP button
+                if (browseIp != null) {
+                    Spacer(Modifier.height(10.dp))
+                    Button(
+                        onClick = onBrowseReceiverIp,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = if (wifi.isEmlidHotspot) {
+                            ButtonDefaults.buttonColors(
+                                containerColor = StatusOk,
+                                contentColor = Color(0xFF052E16)
+                            )
+                        } else {
+                            ButtonDefaults.buttonColors()
+                        }
+                    ) {
+                        Icon(Icons.Default.Language, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = if (wifi.isEmlidHotspot) {
+                                strings.browseRs4IpButton(browseIp)
+                            } else {
+                                strings.browseGatewayIpButton(browseIp)
+                            },
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
 
             Spacer(Modifier.height(10.dp))
 
-            // VPN Status row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -866,14 +906,14 @@ private fun WifiMonitorCard(
                 )
                 Spacer(Modifier.width(10.dp))
                 Text(
-                    text = if (wifi.isVpnActive) "VPN ist AKTIV (kann RS4 Pro blockieren!)" else "Kein VPN aktiv",
+                    text = if (wifi.isVpnActive) strings.vpnActiveWarning else strings.vpnInactiveOk,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = if (wifi.isVpnActive) FontWeight.Bold else FontWeight.Normal,
                     modifier = Modifier.weight(1f)
                 )
                 if (wifi.isVpnActive) {
                     TextButton(onClick = onOpenVpnSettings) {
-                        Text("Trennen", color = StatusError)
+                        Text(strings.disconnectVpnButton, color = StatusError)
                     }
                 }
             }
@@ -884,7 +924,7 @@ private fun WifiMonitorCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("WLAN-Einstellungen öffnen")
+                Text(strings.openWifiSettingsButton)
             }
         }
     }
