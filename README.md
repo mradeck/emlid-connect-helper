@@ -2,7 +2,9 @@
 
 Native Android-Helfer-App (Kotlin / Jetpack Compose) für zuverlässige Verbindungen zwischen einem **Samsung Galaxy S24 Ultra** und einem **Emlid Reach RS4 Pro** mit **Emlid Flow** (`com.emlid.reachview3`).
 
-> **Ausführliche Schritt-für-Schritt-Anleitung für Anwender (inkl. aller Menüpfade & Nebenbedingungen):** siehe **[ANLEITUNG.md](ANLEITUNG.md)**.
+> **User Guides (Step-by-Step, incl. all menus & prerequisites):**  
+> - **Deutsch:** [ANLEITUNG.md](ANLEITUNG.md)  
+> - **English:** [GUIDE.md](GUIDE.md)
 
 ## Funktionen (Variante B + automatischer Fallback auf Variante A)
 
