@@ -6,6 +6,7 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.IBinder
 import de.emlidhelper.app.BuildConfig
+import de.emlidhelper.app.data.SavedWifiNetwork
 import de.emlidhelper.app.data.ShizukuState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -253,7 +254,35 @@ class ShizukuController(
         return results
     }
 
+    suspend fun listSavedWifiNetworks(): List<SavedWifiNetwork> {
+        val res = runCommand("cmd wifi list-networks")
+        if (!res.isSuccess || res.output.isBlank()) return emptyList()
+        return parseSavedWifiNetworks(res.output)
+    }
+
+    suspend fun forgetWifiNetwork(networkId: Int, ssidLabel: String): ShellResult {
+        onLog("Shizuku: WLAN-Profil entfernen ($ssidLabel, ID $networkId)", false)
+        return runCommand("cmd wifi forget-network $networkId")
+    }
+
     companion object {
         private const val SHIZUKU_PERMISSION_REQUEST_CODE = 4201
+        private val SAVED_WIFI_LINE_REGEX = Regex("""^(\d+)\s+(.+?)\s+(\S+)$""")
+
+        fun parseSavedWifiNetworks(output: String): List<SavedWifiNetwork> {
+            val seenIds = linkedMapOf<Int, SavedWifiNetwork>()
+            output.lineSequence().forEach { rawLine ->
+                val line = rawLine.trim()
+                if (line.isBlank() || line.startsWith("Network Id", ignoreCase = true)) return@forEach
+                val match = SAVED_WIFI_LINE_REGEX.matchEntire(line) ?: return@forEach
+                val id = match.groupValues[1].toIntOrNull() ?: return@forEach
+                val ssid = match.groupValues[2].trim().removePrefix("\"").removeSuffix("\"")
+                if (ssid.isBlank()) return@forEach
+                val lower = ssid.lowercase()
+                val isEmlid = lower.startsWith("reach:") || lower.contains("reach") || lower.contains("emlid")
+                seenIds.putIfAbsent(id, SavedWifiNetwork(networkId = id, ssid = ssid, isEmlidRelated = isEmlid))
+            }
+            return seenIds.values.toList()
+        }
     }
 }

@@ -12,8 +12,8 @@ android {
         applicationId = "de.emlidhelper.app"
         minSdk = 31
         targetSdk = 36
-        versionCode = 26110200
-        versionName = "2611.2.0"
+        versionCode = 26110201
+        versionName = "2611.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

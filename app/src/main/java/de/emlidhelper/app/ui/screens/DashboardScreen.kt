@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.BluetoothConnected
 import androidx.compose.material.icons.filled.BluetoothDisabled
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Refresh
@@ -37,6 +38,7 @@ import androidx.compose.material.icons.filled.VpnKey
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -70,6 +72,7 @@ import de.emlidhelper.app.data.HelperUiState
 import de.emlidhelper.app.data.ResetConfig
 import de.emlidhelper.app.data.ResetPhase
 import de.emlidhelper.app.data.ResetProgress
+import de.emlidhelper.app.data.SavedWifiNetwork
 import de.emlidhelper.app.data.ShizukuState
 import de.emlidhelper.app.data.WifiNetworkStatus
 import de.emlidhelper.app.i18n.AppStrings
@@ -98,6 +101,8 @@ fun DashboardScreen(
     onUpdateResetConfig: ((ResetConfig) -> ResetConfig) -> Unit,
     onQuickResetBluetooth: () -> Unit,
     onBrowseReceiverIp: () -> Unit,
+    onForgetReachWifi: () -> Unit,
+    onDismissWifiForgetFeedback: () -> Unit,
     onOpenBluetoothSettings: () -> Unit,
     onOpenWifiSettings: () -> Unit,
     onOpenVpnSettings: () -> Unit,
@@ -165,9 +170,14 @@ fun DashboardScreen(
         item {
             WifiMonitorCard(
                 wifi = state.wifi,
+                savedEmlidWifi = state.savedEmlidWifiNetworks,
+                wifiForgetFeedback = state.wifiForgetFeedback,
+                shizukuReady = state.automation.shizukuState == ShizukuState.READY,
                 strings = strings,
                 isDark = isDark,
                 onBrowseReceiverIp = onBrowseReceiverIp,
+                onForgetReachWifi = onForgetReachWifi,
+                onDismissWifiForgetFeedback = onDismissWifiForgetFeedback,
                 onOpenWifiSettings = onOpenWifiSettings,
                 onOpenVpnSettings = onOpenVpnSettings,
                 onRequestPermissions = onRequestPermissions
@@ -776,14 +786,20 @@ private fun BluetoothMonitorCard(
 @Composable
 private fun WifiMonitorCard(
     wifi: WifiNetworkStatus,
+    savedEmlidWifi: List<SavedWifiNetwork>,
+    wifiForgetFeedback: String?,
+    shizukuReady: Boolean,
     strings: AppStrings,
     isDark: Boolean,
     onBrowseReceiverIp: () -> Unit,
+    onForgetReachWifi: () -> Unit,
+    onDismissWifiForgetFeedback: () -> Unit,
     onOpenWifiSettings: () -> Unit,
     onOpenVpnSettings: () -> Unit,
     onRequestPermissions: () -> Unit
 ) {
     val browseIp = wifi.browseIpAddress
+    var showForgetDialog by remember { mutableStateOf(false) }
 
     ElevatedCard(
         shape = RoundedCornerShape(20.dp),
@@ -919,6 +935,39 @@ private fun WifiMonitorCard(
             }
 
             Spacer(Modifier.height(10.dp))
+
+            if (savedEmlidWifi.isNotEmpty()) {
+                Text(
+                    text = strings.savedReachProfilesLabel(savedEmlidWifi.joinToString(", ") { it.ssid }),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(6.dp))
+            }
+
+            if (wifiForgetFeedback != null) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDark) StatusOkContainerDark else StatusOkContainerLight
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.padding(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.CheckCircle, contentDescription = null, tint = StatusOk, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(wifiForgetFeedback, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+                        IconButton(onClick = onDismissWifiForgetFeedback, modifier = Modifier.size(28.dp)) {
+                            Icon(Icons.Default.Close, contentDescription = strings.close, modifier = Modifier.size(16.dp))
+                        }
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+            }
+
             OutlinedButton(
                 onClick = onOpenWifiSettings,
                 modifier = Modifier.fillMaxWidth(),
@@ -926,7 +975,63 @@ private fun WifiMonitorCard(
             ) {
                 Text(strings.openWifiSettingsButton)
             }
+
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedButton(
+                onClick = { showForgetDialog = true },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(Icons.Default.DeleteOutline, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(strings.forgetReachWifiButton)
+            }
         }
+    }
+
+    if (showForgetDialog) {
+        val canAutoForget = shizukuReady && savedEmlidWifi.isNotEmpty()
+        AlertDialog(
+            onDismissRequest = { showForgetDialog = false },
+            title = { Text(strings.forgetReachDialogTitle, fontWeight = FontWeight.Bold) },
+            text = {
+                Text(
+                    text = when {
+                        canAutoForget -> strings.forgetReachDialogBodyAuto(savedEmlidWifi.joinToString("\n• ") { it.ssid })
+                        shizukuReady -> strings.forgetReachDialogBodyNoProfiles
+                        else -> strings.forgetReachDialogBodyManual
+                    },
+                    style = MaterialTheme.typography.bodySmall
+                )
+            },
+            confirmButton = {
+                if (canAutoForget) {
+                    Button(
+                        onClick = {
+                            showForgetDialog = false
+                            onForgetReachWifi()
+                        }
+                    ) {
+                        Text(strings.forgetReachConfirmButton)
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            showForgetDialog = false
+                            onOpenWifiSettings()
+                        }
+                    ) {
+                        Text(strings.openWifiReconnectButton)
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showForgetDialog = false }) {
+                    Text(strings.cancelButton)
+                }
+            }
+        )
     }
 }
 
