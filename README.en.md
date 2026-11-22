@@ -1,7 +1,7 @@
-# Emlid Connect Helper `v26.11.2.1`
+# Emlid Connect Helper `v26.11.2.2`
 
 **Language / Sprache:** **[Deutsch (README.md)](README.md)** | **English**  
-**Current Version:** `v26.11.2.1` (`versionName = "2611.2.1"`, `versionCode = 26110201`, November 2026)
+**Current Version:** `v26.11.2.2` (`versionName = "2611.2.2"`, `versionCode = 26110202`, November 2026)
 
 Native Android helper app (Kotlin / Jetpack Compose) for reliable connections between Android smartphones (primarily built and tested on **Samsung Galaxy S24 Ultra**) and an **Emlid Reach RS4 Pro** (as well as other Emlid Reach receivers) running with **Emlid Flow** (`com.emlid.reachview3`).
 
@@ -71,6 +71,12 @@ export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 
 ### Full Automation Setup (Variant B, No Root)
 Every menu path and important prerequisite (such as *turning Wi-Fi ON before "Switch to mobile data" becomes clickable*, *Auto Blocker*, *Allow restricted settings*, and *pairing Shizuku on Wi-Fi*) is documented step by step in **[GUIDE.md](GUIDE.md)**.
+
+## New in v26.11.2.2
+- **Additional real-world field troubleshooting notes** in `GUIDE.md`, `ANLEITUNG.md`, and directly inside the app (*Device* tab):
+  - RS4 Pro near buildings: auto-joining known office/home Wi-Fi turns off its own `reach:XX:XX` hotspot.
+  - Vehicle Bluetooth nearby: lingering car Bluetooth links interfering with BLE and quick fix via Airplane Mode reset.
+  - Android / One UI system updates: reminder to open the app checklist after OS updates to catch any silently reset settings immediately.
 
 ## New in v26.11.2.1
 - **Forget Reach Wi-Fi (Reset "Always connect"):** New button inside the Wi-Fi card that removes only saved `reach:*` Wi-Fi profiles via Shizuku (`cmd wifi forget-network`, with a guided manual fallback), forcing Android to show the *"Connected without internet" → "Always connect"* prompt fresh on the next connection.

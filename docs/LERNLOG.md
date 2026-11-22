@@ -1,5 +1,12 @@
 # Lernlog – Emlid Connect Helper
 
+### v2.2: Feld-Praxisfallen (Gebäude-WLAN, Fahrzeug-Bluetooth, Systemupdates) (`v26.11.2.2`)
+
+- **Problem:** Im Praxistest fielen drei weitere reale Störquellen auf: (1) Vor dem Gebäude bucht sich der RS4 Pro automatisch in bekannte Gebäude-WLANs ein und schaltet seinen eigenen `reach:XX:XX`-Hotspot ab. (2) Neben dem eigenen Fahrzeug stören noch verbundene Auto-Bluetooth-Geräte (Freisprechanlage, Android Auto etc.) die Verbindung. (3) Android-/Samsung-Systemupdates setzen einzelne Einstellungen still zurück.
+- **Lösung:** Alle drei Fälle inklusive konkreter Abhilfen (außerhalb Gebäude-WLAN-Reichweite testen / ins selbe WLAN wechseln, Flugmodus-Reset gegen Fahrzeug-BT, kurzer Check im *Samsung*- & *Automation*-Tab nach jedem OS-Update) in `ANLEITUNG.md`, `GUIDE.md`, `README.md`, `README.en.md` und direkt in den In-App-Praxishinweisen (`AppStrings.kt` / `SamsungSettingsScreen.kt`) hinterlegt.
+- **Sonderfälle / Edge-Cases:** Bei Tests direkt am Parkplatz/Gebäude können Gebäude-WLAN *und* Fahrzeug-BT gleichzeitig auftreten – die Dashboard-Karten (Bluetooth-Liste + WLAN-SSID) zeigen beide sofort sichtbar an.
+- **Merksatz:** Kein `reach:XX:XX`-Hotspot vor dem Haus → RS4 Pro hängt im bekannten Gebäude-WLAN; BT-Zicken am Auto → Flugmodus-Reset; nach jedem Handy-Update → 10-Sekunden-Check in der App.
+
 ### v2.1: Reach-WLAN vergessen („Immer verbinden“ zurücksetzen) (`v26.11.2.1`)
 
 - **Problem:** Wurde beim ersten Verbinden mit `reach:XX:XX` die Abfrage *„Verbunden ohne Internet“ → „Immer verbinden“* verpasst oder weggeklickt, merkt sich Android diese Auswahl dauerhaft für das gespeicherte WLAN-Profil und fragt nicht mehr nach.
