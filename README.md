@@ -1,7 +1,7 @@
-# Emlid Connect Helper `v26.11.2.1`
+# Emlid Connect Helper `v26.11.2.2`
 
 **Sprache / Language:** **Deutsch** | **[English (README.en.md)](README.en.md)**  
-**Aktuelle Version:** `v26.11.2.1` (`versionName = "2611.2.1"`, `versionCode = 26110201`, Stand: November 2026)
+**Aktuelle Version:** `v26.11.2.2` (`versionName = "2611.2.2"`, `versionCode = 26110202`, Stand: November 2026)
 
 Native Android-Helfer-App (Kotlin / Jetpack Compose) für zuverlässige Verbindungen zwischen Android-Smartphones (primär optimiert & getestet auf **Samsung Galaxy S24 Ultra**) und einem **Emlid Reach RS4 Pro** (sowie weiteren Emlid-Reach-Empfängern) mit **Emlid Flow** (`com.emlid.reachview3`).
 
@@ -71,6 +71,12 @@ export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 
 ### Einrichtung für Vollautomatik (Variante B, ohne Root)
 Alle Klickpfade und wichtigen Nebenbedingungen (z. B. *WLAN einschalten, bevor „Zu mobilen Daten wechseln“ geändert werden kann*, *Auto Blocker*, *Eingeschränkte Einstellungen zulassen*, *Shizuku im WLAN koppeln*) stehen ausführlich in **[ANLEITUNG.md](ANLEITUNG.md)**.
+
+## Neu in v26.11.2.2
+- **Neue Feld- & Praxis-Hinweise** in `ANLEITUNG.md`, `GUIDE.md` und direkt in der App (Tab *Samsung*):
+  - RS4 Pro vor Gebäuden: automatisches Einbuchen in bekannte WLANs schaltet den eigenen `reach:XX:XX`-Hotspot ab.
+  - Fahrzeug-Bluetooth in der Nähe: Störungen durch Auto-BT-Geräte und schnelle Lösung per Flugmodus-Reset.
+  - Android-/One-UI-Systemupdates: Hinweis, nach Updates kurz die App-Checkliste zu öffnen, um still zurückgesetzte Einstellungen sofort zu erkennen.
 
 ## Neu in v26.11.2.1
 - **Reach-WLAN vergessen („Immer verbinden“ zurücksetzen):** Neuer Button in der WLAN-Karte, um gezielt gespeicherte `reach:*`-WLAN-Profile per Shizuku (`cmd wifi forget-network`) zu entfernen (inkl. geführter Samsung-Kurzhilfe als Fallback), damit Android beim Neuverbinden die Abfrage *„Verbunden ohne Internet“ → „Immer verbinden“* wieder frisch anzeigt.

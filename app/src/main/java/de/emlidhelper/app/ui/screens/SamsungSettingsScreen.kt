@@ -171,6 +171,9 @@ private fun EmlidFieldTipsCard(strings: AppStrings) {
             Text(strings.tipRebootWarning, style = MaterialTheme.typography.bodySmall, color = StatusWarn)
             Text(strings.tipSecondaryDevice, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(strings.tipGeminiWifiNote, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(strings.tipBuildingWifiHotspot, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(strings.tipVehicleBluetooth, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(strings.tipSystemUpdateCheck, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }

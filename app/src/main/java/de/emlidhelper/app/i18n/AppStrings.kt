@@ -101,6 +101,9 @@ data class AppStrings(
     val tipRebootWarning: String,
     val tipSecondaryDevice: String,
     val tipGeminiWifiNote: String,
+    val tipBuildingWifiHotspot: String,
+    val tipVehicleBluetooth: String,
+    val tipSystemUpdateCheck: String,
 
     // Automation screen
     val autoHeading: String,
@@ -270,6 +273,9 @@ private val GermanStrings = AppStrings(
     tipRebootWarning = "• Neustart-Warnung: Den Netzschalter am RS4 Pro beim Neustart niemals länger als 5 Sekunden gedrückt halten – sonst wechselt der Empfänger in den Werksmodus (Factory Mode).",
     tipSecondaryDevice = "• Zweitgeräte: Sicherstellen, dass kein Tablet oder Zweit-Smartphone im Hintergrund noch mit dem RS4 Pro verbunden ist.",
     tipGeminiWifiNote = "• One-UI-Hinweis (Gemini vs. Chrome): Bei aktivem Reach-WLAN („Ohne Internet“) funktioniert Chrome über 5G weiter, einzelne Apps wie die Gemini-App melden evtl. Offline. Workaround: Browser nutzen oder RS4 Pro am mobilen Hotspot des Handys anmelden.",
+    tipBuildingWifiHotspot = "• Tests vor Gebäuden: Der RS4 Pro verbindet sich automatisch mit bekannten WLANs (z. B. Büro/Zuhause) und schaltet dabei seinen eigenen Hotspot (reach:XX:XX) ab. Weiter weg vom Gebäude testen oder mit dem Handy ins selbe WLAN wechseln.",
+    tipVehicleBluetooth = "• Fahrzeug-Bluetooth: In der Nähe des eigenen Autos halten aktive Fahrzeug-BT-Geräte (Freisprechanlage, Android Auto etc.) oft Verbindungen offen – im Dashboard prüfen und den Flugmodus-Reset am Handy nutzen.",
+    tipSystemUpdateCheck = "• Nach Systemupdates: Android-/One-UI-Updates setzen teils Einstellungen zurück (Akku, WLAN, Shizuku). Nach jedem Update kurz diese Checkliste öffnen – die App meldet sofort, was neu gesetzt werden muss.",
 
     autoHeading = "Variante B: Vollautomatik",
     autoSubtitle = "Ermöglicht 1-Tap-Flugmodus, Force-Stop, Deep-Bluetooth-Scan & Auto-Cache ohne Root.",
@@ -435,6 +441,9 @@ private val EnglishStrings = AppStrings(
     tipRebootWarning = "• Reboot warning: Never hold the RS4 Pro power button longer than 5 seconds when rebooting — otherwise it enters Factory Mode.",
     tipSecondaryDevice = "• Secondary devices: Make sure no tablet or second phone is still connected to the RS4 Pro in the background.",
     tipGeminiWifiNote = "• One UI note (Gemini vs. Chrome): On a Reach hotspot (\"No internet\"), Chrome routes via 5G normally, while some apps like the native Gemini app may report offline. Workaround: use Chrome, or connect the RS4 Pro to your phone's Mobile Hotspot.",
+    tipBuildingWifiHotspot = "• Testing near buildings: The RS4 Pro automatically joins known Wi-Fi networks (office/home) and turns off its own reach:XX:XX hotspot. Move out of building Wi-Fi range or connect your phone to the same Wi-Fi.",
+    tipVehicleBluetooth = "• Vehicle Bluetooth nearby: Standing near your car can keep vehicle Bluetooth links (hands-free, Android Auto, etc.) active — check the Dashboard and run the Airplane Mode reset.",
+    tipSystemUpdateCheck = "• After system updates: Android / One UI updates often reset settings (battery, Wi-Fi, Shizuku). Briefly open this checklist after every update — the app immediately flags anything that changed.",
 
     autoHeading = "Variant B: Full Automation",
     autoSubtitle = "Enables 1-tap Airplane Mode, Force-Stop, Deep Bluetooth Scan & Auto-Cache without Root.",
