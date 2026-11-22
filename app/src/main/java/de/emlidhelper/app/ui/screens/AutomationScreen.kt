@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,6 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.emlidhelper.app.data.HelperUiState
 import de.emlidhelper.app.data.ShizukuState
+import de.emlidhelper.app.i18n.AppStrings
+import de.emlidhelper.app.ui.components.AppFooter
 import de.emlidhelper.app.ui.theme.StatusError
 import de.emlidhelper.app.ui.theme.StatusInfo
 import de.emlidhelper.app.ui.theme.StatusOk
@@ -43,6 +44,7 @@ import de.emlidhelper.app.ui.theme.StatusWarn
 @Composable
 fun AutomationScreen(
     state: HelperUiState,
+    strings: AppStrings,
     onRequestShizukuPermission: () -> Unit,
     onOpenShizukuApp: () -> Unit,
     onOpenAccessibilitySettings: () -> Unit,
@@ -59,12 +61,12 @@ fun AutomationScreen(
     ) {
         item {
             Text(
-                "Variante B: Vollautomatik",
+                strings.autoHeading,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                "Ermöglicht 1-Tap-Flugmodus, Force-Stop, Deep-Bluetooth-Scan & Auto-Cache ohne Root.",
+                strings.autoSubtitle,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -73,11 +75,11 @@ fun AutomationScreen(
         // 1. Shizuku Card
         item {
             val (badgeText, badgeColor) = when (auto.shizukuState) {
-                ShizukuState.READY -> "Aktiv (UID ${auto.shizukuUid ?: 2000})" to StatusOk
-                ShizukuState.CONNECTING -> "Verbinde…" to StatusInfo
-                ShizukuState.PERMISSION_REQUIRED -> "Freigabe nötig" to StatusWarn
-                ShizukuState.NOT_RUNNING -> "Dienst aus" to StatusWarn
-                ShizukuState.NOT_INSTALLED -> "Nicht installiert" to StatusError
+                ShizukuState.READY -> strings.shizukuStatusReady(auto.shizukuUid ?: 2000) to StatusOk
+                ShizukuState.CONNECTING -> strings.shizukuStatusConnecting to StatusInfo
+                ShizukuState.PERMISSION_REQUIRED -> strings.shizukuStatusPermReq to StatusWarn
+                ShizukuState.NOT_RUNNING -> strings.shizukuStatusOff to StatusWarn
+                ShizukuState.NOT_INSTALLED -> strings.shizukuStatusNotInstalled to StatusError
             }
 
             ElevatedCard(shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
@@ -86,7 +88,7 @@ fun AutomationScreen(
                         Icon(Icons.Default.Terminal, contentDescription = null, tint = badgeColor)
                         Spacer(Modifier.width(10.dp))
                         Text(
-                            "1. Shizuku (Flugmodus, Force-Stop & BT)",
+                            strings.shizukuTitle,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.weight(1f)
@@ -95,7 +97,7 @@ fun AutomationScreen(
                     }
 
                     Text(
-                        "Ohne Root-Rechte erlaubt Shizuku über Androids Wireless Debugging das automatische Schalten von Flugmodus/Bluetooth, Zwangsbeenden von Emlid Flow und Freigeben der Akkuoptimierung.",
+                        strings.shizukuBody,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -109,11 +111,11 @@ fun AutomationScreen(
                                 .padding(12.dp),
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Text("Einrichtung auf dem S24 Ultra (einmalig ca. 2 Min.):", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.labelMedium)
-                            Text("1. App „Shizuku“ aus dem Play Store installieren.", style = MaterialTheme.typography.bodySmall)
-                            Text("2. Entwickleroptionen → „WLAN-Debugging“ aktivieren.", style = MaterialTheme.typography.bodySmall)
-                            Text("3. In Shizuku auf „Koppeln“ → „Starten“ tippen.", style = MaterialTheme.typography.bodySmall)
-                            Text("4. Hier auf „Berechtigung anfragen“ tippen.", style = MaterialTheme.typography.bodySmall)
+                            Text(strings.shizukuSetupHeading, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.labelMedium)
+                            Text(strings.shizukuStep1, style = MaterialTheme.typography.bodySmall)
+                            Text(strings.shizukuStep2, style = MaterialTheme.typography.bodySmall)
+                            Text(strings.shizukuStep3, style = MaterialTheme.typography.bodySmall)
+                            Text(strings.shizukuStep4, style = MaterialTheme.typography.bodySmall)
                         }
                     }
 
@@ -121,33 +123,33 @@ fun AutomationScreen(
                         when (auto.shizukuState) {
                             ShizukuState.PERMISSION_REQUIRED -> {
                                 Button(onClick = onRequestShizukuPermission, shape = RoundedCornerShape(10.dp)) {
-                                    Text("Berechtigung anfragen")
+                                    Text(strings.shizukuRequestPermButton)
                                 }
                             }
 
                             ShizukuState.NOT_INSTALLED -> {
                                 Button(onClick = onOpenShizukuApp, shape = RoundedCornerShape(10.dp)) {
-                                    Text("Shizuku installieren")
+                                    Text(strings.shizukuInstallButton)
                                 }
                             }
 
                             ShizukuState.NOT_RUNNING -> {
                                 Button(onClick = onOpenShizukuApp, shape = RoundedCornerShape(10.dp)) {
-                                    Text("Shizuku öffnen")
+                                    Text(strings.shizukuOpenButton)
                                 }
                             }
 
                             else -> Unit
                         }
                         OutlinedButton(onClick = onRefresh, shape = RoundedCornerShape(10.dp)) {
-                            Text("Status prüfen")
+                            Text(strings.checkStatusButton)
                         }
                     }
                 }
             }
         }
 
-        // 2. Accessibility Service Card (Auto Clear Cache)
+        // 2. Accessibility Service Card
         item {
             val enabled = auto.accessibilityEnabled
             ElevatedCard(shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
@@ -160,29 +162,31 @@ fun AutomationScreen(
                         )
                         Spacer(Modifier.width(10.dp))
                         Text(
-                            "2. Auto-Cache leeren (Bedienungshilfe)",
+                            strings.accessTitle,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.weight(1f)
                         )
-                        StatusPill(if (enabled) "Aktiv" else "Aus", if (enabled) StatusOk else StatusWarn)
+                        StatusPill(
+                            if (enabled) strings.accessStatusOn else strings.accessStatusOff,
+                            if (enabled) StatusOk else StatusWarn
+                        )
                     }
 
                     Text(
-                        "Android verbietet es selbst Shizuku, nur den Cache einer anderen App ohne Datenverlust zu leeren. Die Bedienungshilfe öffnet beim Reset kurz die App-Info von Emlid Flow und tippt ausschließlich auf „Speicher“ → „Cache leeren“ (niemals „Daten löschen“).",
+                        strings.accessBody,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Text(
-                        "Pfad auf Samsung One UI: Einstellungen → Eingabehilfe → Installierte Apps → „Emlid Helper – Auto-Cache leeren“ aktivieren.\n" +
-                            "Hinweis bei Sideloading (Android 13+): Falls der Schalter ausgegraut ist, zuerst Einstellungen → Apps → Emlid Helper → 3-Punkte-Menü oben rechts → „Eingeschränkte Einstellungen zulassen“.",
+                        strings.accessPathHint,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
 
                     OutlinedButton(onClick = onOpenAccessibilitySettings, shape = RoundedCornerShape(10.dp)) {
-                        Text(if (enabled) "Eingabehilfe-Einstellungen öffnen" else "Jetzt in Eingabehilfe aktivieren")
+                        Text(if (enabled) strings.accessOpenSettings else strings.accessEnableNow)
                     }
                 }
             }
@@ -201,21 +205,23 @@ fun AutomationScreen(
                         )
                         Spacer(Modifier.width(10.dp))
                         Text(
-                            "3. App-Berechtigungen",
+                            strings.permsCardTitle,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.weight(1f)
                         )
-                        StatusPill(if (allGranted) "OK" else "Fehlt", if (allGranted) StatusOk else StatusError)
+                        StatusPill(
+                            if (allGranted) strings.permsOk else strings.permsMissing,
+                            if (allGranted) StatusOk else StatusError
+                        )
                     }
                     Text(
-                        "• Bluetooth (Geräte in der Nähe): ${if (auto.hasBluetoothPermission) "Erteilt" else "Fehlt"}\n" +
-                            "• Standort (für WLAN-SSID & BLE): ${if (auto.hasLocationPermission) "Erteilt" else "Fehlt"}",
+                        strings.permsDetail(auto.hasBluetoothPermission, auto.hasLocationPermission),
                         style = MaterialTheme.typography.bodySmall
                     )
                     if (!allGranted) {
                         Button(onClick = onRequestPermissions, shape = RoundedCornerShape(10.dp)) {
-                            Text("Berechtigungen erteilen")
+                            Text(strings.permsGrantButton)
                         }
                     }
                 }
@@ -229,13 +235,13 @@ fun AutomationScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "Diagnose-Protokoll",
+                    strings.logHeading,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(onClick = onClearLogs) {
-                    Icon(Icons.Default.DeleteSweep, contentDescription = "Log leeren")
+                    Icon(Icons.Default.DeleteSweep, contentDescription = strings.clearLog)
                 }
             }
         }
@@ -243,7 +249,7 @@ fun AutomationScreen(
         if (state.logs.isEmpty()) {
             item {
                 Text(
-                    "Noch keine Einträge.",
+                    strings.logEmpty,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -273,6 +279,8 @@ fun AutomationScreen(
             }
         }
 
-        item { Spacer(Modifier.height(12.dp)) }
+        item {
+            AppFooter(strings = strings, language = state.language)
+        }
     }
 }

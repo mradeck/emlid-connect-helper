@@ -13,6 +13,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import de.emlidhelper.app.accessibility.AccessibilityBridge
+import de.emlidhelper.app.data.AppLanguage
+import de.emlidhelper.app.data.AppThemeMode
 import de.emlidhelper.app.data.AutomationCapabilities
 import de.emlidhelper.app.data.DiagnosticLogEntry
 import de.emlidhelper.app.data.HelperPreferences
@@ -45,7 +47,11 @@ class HelperViewModel(application: Application) : AndroidViewModel(application) 
     private val settingsMonitor = SamsungSettingsMonitor(appContext)
 
     private val _uiState = MutableStateFlow(
-        HelperUiState(resetConfig = prefs.loadResetConfig())
+        HelperUiState(
+            language = prefs.loadLanguage(),
+            themeMode = prefs.loadThemeMode(),
+            resetConfig = prefs.loadResetConfig()
+        )
     )
     val uiState: StateFlow<HelperUiState> = _uiState.asStateFlow()
 
@@ -77,21 +83,18 @@ class HelperViewModel(application: Application) : AndroidViewModel(application) 
         shizukuController.start()
         registerSystemReceivers()
 
-        // Observe Shizuku state changes
         viewModelScope.launch {
             shizukuController.state.collect {
                 refreshAllInternal()
             }
         }
 
-        // Observe Accessibility state changes
         viewModelScope.launch {
             AccessibilityBridge.isServiceConnected.collect {
                 refreshAllInternal()
             }
         }
 
-        // Observe Reset orchestrator progress
         viewModelScope.launch {
             resetOrchestrator.progress.collect { progress ->
                 _uiState.update { it.copy(resetProgress = progress) }
@@ -122,6 +125,25 @@ class HelperViewModel(application: Application) : AndroidViewModel(application) 
         receiverRegistered = true
     }
 
+    fun toggleLanguage() {
+        val next = if (_uiState.value.language == AppLanguage.DE) AppLanguage.EN else AppLanguage.DE
+        prefs.saveLanguage(next)
+        _uiState.update { it.copy(language = next) }
+        refreshAll()
+    }
+
+    fun toggleTheme(isCurrentlyDark: Boolean) {
+        val next = if (isCurrentlyDark) AppThemeMode.LIGHT else AppThemeMode.DARK
+        prefs.saveThemeMode(next)
+        _uiState.update { it.copy(themeMode = next) }
+    }
+
+    fun browseReceiverIp() {
+        val url = _uiState.value.wifi.receiverBrowseUrl ?: return
+        appendLog("Browser öffnen: $url", false)
+        settingsMonitor.openUrlInBrowser(url)
+    }
+
     fun refreshAll() {
         viewModelScope.launch {
             shizukuController.refreshState()
@@ -130,10 +152,11 @@ class HelperViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private suspend fun refreshAllInternal() {
+        val lang = _uiState.value.language
         val bt = bluetoothMonitor.inspect(shizukuController)
-        val wifi = networkMonitor.inspect()
+        val wifi = networkMonitor.inspect(lang)
         val locEnabled = networkMonitor.isLocationServiceEnabled()
-        val checks = settingsMonitor.buildChecklist(bt, wifi, locEnabled, shizukuController)
+        val checks = settingsMonitor.buildChecklist(bt, wifi, locEnabled, shizukuController, lang)
         val capabilities = AutomationCapabilities(
             shizukuState = shizukuController.state.value,
             shizukuUid = shizukuController.uid.value,
@@ -247,10 +270,6 @@ class HelperViewModel(application: Application) : AndroidViewModel(application) 
 
     fun openAirplaneModeSettings() {
         settingsMonitor.openAirplaneModeSettings()
-    }
-
-    fun openEmlidAppInfo() {
-        settingsMonitor.openEmlidAppInfo()
     }
 
     fun launchEmlidFlow() {

@@ -31,9 +31,9 @@ class AppMetadataTest {
 
     @Test
     fun appMetadata_matchesCurrentBuildConfig() {
-        assertEquals("2611.1.0", AppMetadata.APP_PACKAGE_VERSION)
-        assertEquals("v26.11.1.0", AppMetadata.APP_VERSION_CODE)
-        assertEquals("Emlid Connect Helper v26.11.1.0", AppMetadata.APP_TITLE)
-        assertEquals(1, AppMetadata.APP_VERSION_REVISION)
+        assertEquals("2611.2.0", AppMetadata.APP_PACKAGE_VERSION)
+        assertEquals("v26.11.2.0", AppMetadata.APP_VERSION_CODE)
+        assertEquals("Emlid Connect Helper v26.11.2.0", AppMetadata.APP_TITLE)
+        assertEquals(2, AppMetadata.APP_VERSION_REVISION)
     }
 }

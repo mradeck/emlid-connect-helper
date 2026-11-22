@@ -1,6 +1,7 @@
 # Step-by-Step User Guide: Emlid Connect Helper (Samsung Galaxy S24 Ultra)
 
-This guide walks you **menu by menu** through installing, configuring, and using **Emlid Connect Helper** on a **Samsung Galaxy S24 Ultra** (One UI) for the **Emlid Reach RS4 Pro** with **Emlid Flow**.
+This guide walks you **menu by menu** through installing, configuring, and using **Emlid Connect Helper** on a **Samsung Galaxy S24 Ultra** (tested on **One UI 9.0 / Android 17**, *Intelligent Wi-Fi 9.0.0*) for the **Emlid Reach RS4 Pro** with **Emlid Flow**.  
+*(Note: The app also works on **other Android 12+ smartphones** such as Google Pixel, Motorola, OnePlus, or Xiaomi — only a few system menu names differ slightly and the Samsung-specific "Intelligent Wi-Fi" step does not apply.)*
 
 ---
 
@@ -16,6 +17,7 @@ Several settings on Samsung Galaxy devices are **greyed out** or will not work u
 | The **Accessibility Service** toggle is **greyed out** | Android 13+ **"Restricted Settings"** protection for manually sideloaded APKs. | Open *Settings → Apps → Emlid Helper → 3-dot menu (top right) → **Allow restricted settings***, then return to Accessibility. |
 | **Shizuku** cannot pair or start | **Wireless debugging** only works while the phone is connected to a **Wi-Fi network**. | Connect to any Wi-Fi network briefly, then pair & start Shizuku. |
 | **Shizuku** shows "Service stopped" after rebooting the phone | Android stops ADB/Shizuku services after every full device restart. | Open the Shizuku app briefly → tap **Start** (or simply use Emlid Helper's built-in guided fallback mode). |
+| **Gemini app reports "No internet"** while **Chrome works normally** (when connected to Reach Wi-Fi) | On Samsung One UI 9.0 / Android 17, Chrome routes traffic over 5G even when connected to a *"Connected without internet"* Wi-Fi hotspot, whereas some apps (such as the native Gemini app) inspect the non-internet Wi-Fi interface and treat the phone as offline. | Either use **Chrome** (`gemini.google.com`), toggle Wi-Fi off briefly — or even better: connect the **RS4 Pro as a client to your phone's Mobile Hotspot** (instead of connecting your phone to `reach:XX:XX`) so every app keeps full 5G internet. |
 
 > **Important Safety Notes for Emlid Flow & Reach RS4 Pro:**  
 > When resetting Emlid Flow, **always tap "Clear cache" only** — **never "Clear data"**, as clearing data deletes local projects and logins!  
