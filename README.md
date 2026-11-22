@@ -1,10 +1,15 @@
-# Emlid Connect Helper (Samsung Galaxy S24 Ultra)
+# Emlid Connect Helper `v26.11.1.0` (Samsung Galaxy S24 Ultra)
+
+**Aktuelle Version:** `v26.11.1.0` (`versionName = "2611.1.0"`, `versionCode = 26110100`, Stand: November 2026)
 
 Native Android-Helfer-App (Kotlin / Jetpack Compose) für zuverlässige Verbindungen zwischen einem **Samsung Galaxy S24 Ultra** und einem **Emlid Reach RS4 Pro** mit **Emlid Flow** (`com.emlid.reachview3`).
 
 > **User Guides (Step-by-Step, incl. all menus & prerequisites):**  
 > - **Deutsch:** [ANLEITUNG.md](ANLEITUNG.md)  
 > - **English:** [GUIDE.md](GUIDE.md)
+
+## Neu in v26.11.1.0
+- Erste vollständige Version (Variante B + automatischer Fallback auf Variante A) mit 1-Tap-Reset (Force-Stop + Auto-Cache + Flugmodus-Timer), Live-Bluetooth-/WLAN-/VPN-Monitor, Samsung S24 Ultra Checkliste und verbindlichem Versionsschema (`AppMetadata`, dauerhaft sichtbar in der App-Kopfzeile).
 
 ## Funktionen (Variante B + automatischer Fallback auf Variante A)
 

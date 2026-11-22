@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -19,6 +20,7 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -37,6 +39,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.emlidhelper.app.config.AppMetadata
 import de.emlidhelper.app.data.CheckSeverity
 import de.emlidhelper.app.ui.HelperViewModel
 import de.emlidhelper.app.ui.screens.AutomationScreen
@@ -101,14 +104,21 @@ private fun EmlidHelperRoot(viewModel: HelperViewModel = viewModel()) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = when (selectedTab) {
-                            0 -> "Emlid Connect Helper"
-                            1 -> "Samsung S24 Check"
-                            else -> "Automation & Log"
-                        },
-                        fontWeight = FontWeight.Bold
-                    )
+                    Column {
+                        Text(
+                            text = when (selectedTab) {
+                                0 -> AppMetadata.APP_NAME
+                                1 -> "Samsung S24 Check"
+                                else -> "Automation & Log"
+                            },
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = AppMetadata.APP_VERSION_CODE,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             )
         },
