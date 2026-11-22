@@ -1,11 +1,13 @@
 # Lernlog – Emlid Connect Helper
 
-### v1.1 (vorbereitet): Englisch-README, Android-12+-Kompatibilität & One-UI-9.0-WLAN-Beobachtung
+### v2: Hotspot-IP-Browser, DE/EN, Hell/Dunkel, Portfolio-Footer & One-UI-9.0-WLAN-Beobachtung (`v26.11.2.0`)
 
-- **Problem:** Im Feld trat bei aktiver Verbindung zum Reach-WLAN (`reach:XX:XX`, *„Verbunden ohne Internet“*) unter **Samsung One UI 9.0 / Android 17** ein irreführendes Verhalten auf: Während **Chrome** normal über 5G ins Internet kam, meldete die **native Gemini-App** „Kein Internet“, sodass WLAN zum Nachschlagen extra deaktiviert werden musste. Zudem fehlte noch eine englische README sowie eine klare Einordnung zur Kompatibilität auf Nicht-Samsung-Geräten.
-- **Lösung:** `README.en.md` ergänzt, Kompatibilitätsmatrix (Android 12+ allgemein + Referenz **Samsung Galaxy S24 Ultra / One UI 9.0 / Android 17 / Intelligent Wi-Fi 9.0.0**) dokumentiert und den One-UI-Netzwerk-Hinweis samt Workaround (Chrome nutzen oder RS4 Pro per mobilem Hotspot des Handys anbinden) in `README.md`, `README.en.md`, `ANLEITUNG.md` und `GUIDE.md` aufgenommen.
-- **Sonderfälle / Edge-Cases:** Android hält bei *„Verbunden ohne Internet“* Mobilfunk als Standard-Route (`NET_CAPABILITY_VALIDATED`) offen, manche Apps prüfen aber das aktive WLAN-Interface separat und verweigern den Netzverkehr trotz funktionierendem 5G.
-- **Merksatz:** Wenn bei aktivem Reach-Hotspot einzelne Apps (wie die Gemini-App) „Offline“ melden obwohl Chrome funktioniert, entweder im Browser suchen – oder den RS4 Pro direkt ins mobile Hotspot-WLAN des Smartphones hängen.
+- **Problem:** Im Feld fehlten ein direkter 1-Tap-Sprung zur Web-Oberfläche des RS4 Pro über dessen Hotspot-IP, eine DE/EN- & Hell/Dunkel-Umschaltung sowie die einheitliche App-Fußzeile (wie bei `gps2utm.netlify.app`). Außerdem trat bei aktiver Verbindung zum Reach-WLAN (`reach:XX:XX`, *„Verbunden ohne Internet“*) unter **Samsung One UI 9.0 / Android 17** das Verhalten auf, dass **Chrome** normal über 5G ins Internet kam, die **native Gemini-App** aber „Kein Internet“ meldete.
+- **Lösung:** Gateway-/Empfänger-IP-Erkennung (`LinkProperties` + `DhcpInfo` + `192.168.42.1`-Fallback) mit *„RS4 Pro im Browser öffnen“*-Button, vollständige Live-i18n (`AppStrings`, SVG-Flaggen DE/GB), Hell/Dunkel-Theme-Toggle, Portfolio-Footer mit Support-/Lizenz-Dialogen, `README.en.md` sowie Android-12+-/One-UI-9.0-Dokumentation.
+- **Sonderfälle / Edge-Cases:**
+  - Android hält bei *„Verbunden ohne Internet“* Mobilfunk als Standard-Route (`NET_CAPABILITY_VALIDATED`) offen; einzelne Apps (wie die Gemini-App) prüfen aber das aktive WLAN-Interface separat und melden Offline trotz funktionierendem 5G.
+  - **Testversions-Pflicht:** Auch vor jedem lokalen Test-Build/APK-Install die Versionsnummer direkt hochzählen, damit im App-Header eindeutig erkennbar ist, welcher Stand getestet wird.
+- **Merksatz:** Wenn bei aktivem Reach-Hotspot einzelne Apps „Offline“ melden obwohl Chrome funktioniert, im Browser suchen oder den RS4 Pro ins mobile Hotspot-WLAN des Smartphones hängen – und jede Testversion trägt bereits ihre eigene hochgezählte Versionsnummer.
 
 ### v1: Erstversion & Samsung-S24-Ultra-Erkenntnisse (`v26.11.1.0`)
 

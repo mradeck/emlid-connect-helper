@@ -1,7 +1,7 @@
-# Emlid Connect Helper `v26.11.1.0`
+# Emlid Connect Helper `v26.11.2.0`
 
 **Language / Sprache:** **[Deutsch (README.md)](README.md)** | **English**  
-**Current Version:** `v26.11.1.0` (`versionName = "2611.1.0"`, `versionCode = 26110100`, November 2026)
+**Current Version:** `v26.11.2.0` (`versionName = "2611.2.0"`, `versionCode = 26110200`, November 2026)
 
 Native Android helper app (Kotlin / Jetpack Compose) for reliable connections between Android smartphones (primarily built and tested on **Samsung Galaxy S24 Ultra**) and an **Emlid Reach RS4 Pro** (as well as other Emlid Reach receivers) running with **Emlid Flow** (`com.emlid.reachview3`).
 
@@ -71,6 +71,13 @@ export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 
 ### Full Automation Setup (Variant B, No Root)
 Every menu path and important prerequisite (such as *turning Wi-Fi ON before "Switch to mobile data" becomes clickable*, *Auto Blocker*, *Allow restricted settings*, and *pairing Shizuku on Wi-Fi*) is documented step by step in **[GUIDE.md](GUIDE.md)**.
+
+## New in v26.11.2.0
+- **Browse RS4 Pro Hotspot IP:** Automatic receiver/gateway IP detection (`LinkProperties` + `DhcpInfo` + `192.168.42.1` fallback) with a 1-tap *"Browse RS4 Pro"* button.
+- **EN / DE Language Toggle** with crisp SVG vector flag icons in the top bar (full live bilingual UI).
+- **Light / Dark Theme Toggle** in the top bar (persistent, with matching status/nav bar icon contrast).
+- **Portfolio Footer matching `gps2utm.netlify.app`:** More apps (9 tools), Source code, Help/Bug report/Contact dialog, Licenses/Copyright dialog, Imprint & Ko-fi.
+- **English README (`README.en.md`), Android 12+ compatibility matrix** (reference: S24 Ultra, One UI 9.0 / Android 17), and One UI field note (Gemini app offline vs. Chrome online on no-internet Reach Wi-Fi).
 
 ## New in v26.11.1.0
 - Initial full release (Variant B + automatic Variant A fallback) featuring 1-tap reset (force-stop + auto-cache + airplane mode timer), live Bluetooth/Wi-Fi/VPN monitoring, Samsung checklist, Emlid Flow quick launch, and global version schema (`AppMetadata`, permanently visible in the app header).
